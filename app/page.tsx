@@ -1,5 +1,6 @@
 import TopBar from "@/components/layout/TopBar";
 import ModuleView from "@/components/module/ModuleView";
+import InvestmentIntelligence from "@/components/module/InvestmentIntelligence";
 import { enabledModules, getModule } from "@/lib/modules";
 import { getModuleData, type ModuleData } from "@/lib/moduleData";
 
@@ -59,7 +60,10 @@ export default async function Home({
             <div style={{ color: "var(--text2)", fontSize: "0.8rem", lineHeight: 1.5 }}>{fetchError}</div>
           </div>
         ) : data ? (
-          <ModuleView data={data} />
+          <>
+            <ModuleView data={data} />
+            {active?.id === "pokemon-investing" ? <InvestmentIntelligence /> : null}
+          </>
         ) : (
           <div className="card" style={{ color: "var(--text3)" }}>No modules configured.</div>
         )}

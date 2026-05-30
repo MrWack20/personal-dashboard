@@ -1,0 +1,182 @@
+{
+  "lastUpdated": "2026-05-30",
+  "usdToPhp": 61.47,
+  "watchlist": [
+    {
+      "name": "Giratina VSTAR",
+      "cardNumber": "GG69",
+      "set": "Crown Zenith Galarian Gallery",
+      "type": "GG",
+      "usdPrice": 376,
+      "phpEstimate": 23100,
+      "budgetStatus": "over",
+      "priority": "high",
+      "holdMonths": "12-24",
+      "sellTarget": "Save — aspirational target only",
+      "notes": "King of the GG set. Up +64.6% in 30 days as of May 2026. 6th most trending card globally. Way over ₱5K budget but the card to aim for long-term.",
+      "tags": ["trending", "out of print", "GG set"]
+    },
+    {
+      "name": "Origin Forme Palkia VSTAR",
+      "cardNumber": "GG67",
+      "set": "Crown Zenith Galarian Gallery",
+      "type": "GG",
+      "usdPrice": 115,
+      "phpEstimate": 7070,
+      "budgetStatus": "stretch",
+      "priority": "high",
+      "holdMonths": "12-24",
+      "sellTarget": "₱9,000–10,000 (+27–41%)",
+      "notes": "Up +12.8% in 30 days. Lowest-entry card in the 'actually moving' tier of GG. Save to ₱8–10K budget then buy this. Part of the God trio with Dialga and Giratina.",
+      "tags": ["save for this", "God trio", "GG set"]
+    },
+    {
+      "name": "Regigigas VSTAR",
+      "cardNumber": "GG55",
+      "set": "Crown Zenith Galarian Gallery",
+      "type": "GG",
+      "usdPrice": 44,
+      "phpEstimate": 2700,
+      "budgetStatus": "within",
+      "priority": "medium",
+      "holdMonths": "12-18",
+      "sellTarget": "₱3,500–4,000 (+30–48%)",
+      "notes": "Best GG card accessible within ₱5K budget. Out-of-print set. Slow grower but steady. Pair with Cynthia's Ambition for a ~₱4,100 combined GG play.",
+      "tags": ["₱5K budget", "within reach", "GG set"]
+    },
+    {
+      "name": "Cynthia's Ambition",
+      "cardNumber": "GG59",
+      "set": "Crown Zenith Galarian Gallery",
+      "type": "GG",
+      "usdPrice": 23,
+      "phpEstimate": 1410,
+      "budgetStatus": "within",
+      "priority": "medium",
+      "holdMonths": "12-18",
+      "sellTarget": "₱1,900–2,200 (+35–56%)",
+      "notes": "Trainer supporter card. Cynthia is one of the most beloved characters in the franchise — GG trainer cards are underpriced vs Pokémon cards. Sleeper pick. Pairs with Regigigas for ~₱4,100 combined.",
+      "tags": ["sleeper", "underpriced", "GG trainer card"]
+    },
+    {
+      "name": "Umbreon V",
+      "cardNumber": "TG06",
+      "set": "Lost Origin Trainer Gallery",
+      "type": "TG",
+      "usdPrice": 60,
+      "phpEstimate": 3690,
+      "budgetStatus": "within",
+      "priority": "high",
+      "holdMonths": "12-18",
+      "sellTarget": "₱5,000–5,500 (+35–49%)",
+      "notes": "Best TG buy within ₱5K budget. Umbreon has one of the deepest fan bases in Pokémon. Accessible entry point vs the ₱30,000+ Evolving Skies Umbreon VMAX Alt Art. Liquidly sellable in PH.",
+      "tags": ["₱5K budget", "TG set", "Umbreon demand"]
+    },
+    {
+      "name": "Pikachu VMAX",
+      "cardNumber": "TG16",
+      "set": "Lost Origin Trainer Gallery",
+      "type": "TG",
+      "usdPrice": 127,
+      "phpEstimate": 7800,
+      "budgetStatus": "over",
+      "priority": "high",
+      "holdMonths": "12-24",
+      "sellTarget": "Save — aspirational TG target",
+      "notes": "The top TG card from Lost Origin. Pikachu + VMAX treatment. Far out of ₱5K range but the TG card to save toward after GG67.",
+      "tags": ["save for this", "TG set", "Pikachu demand"]
+    },
+    {
+      "name": "Pikachu",
+      "cardNumber": "TG30",
+      "set": "Lost Origin Trainer Gallery",
+      "type": "TG",
+      "usdPrice": 33,
+      "phpEstimate": 2030,
+      "budgetStatus": "within",
+      "priority": "medium",
+      "holdMonths": "6-12",
+      "sellTarget": "₱2,600–2,800 (+28–38%)",
+      "notes": "Last card in the TG set — collectors chasing full TG sets need this. Pikachu demand is eternal. Liquidly sellable in PH. Good complement to TG03 Charizard already in portfolio.",
+      "tags": ["₱5K budget", "TG set", "Pikachu demand"]
+    },
+    {
+      "name": "Mega Greninja ex SIR",
+      "cardNumber": "Chase",
+      "set": "Chaos Rising (Mega Evolution)",
+      "type": "SIR",
+      "usdPrice": 100,
+      "phpEstimate": 6150,
+      "budgetStatus": "stretch",
+      "priority": "high",
+      "holdMonths": "2-3",
+      "sellTarget": "₱10,000–15,000+ (wait 2–3 months post-pull)",
+      "notes": "The #1 chase card of 2026 so far. Mega Evo block SIRs have opened at $100+ day-one and hit $400+ within months. If pulled from sealed Chaos Rising product — DO NOT sell immediately. Hold 2–3 months minimum. If buying raw from PH seller, target under ₱6,000.",
+      "tags": ["hottest 2026", "Chaos Rising", "from your sealed"]
+    },
+    {
+      "name": "Sylveon ex / Espeon ex SIR",
+      "cardNumber": "SIR",
+      "set": "Prismatic Evolutions (SV)",
+      "type": "SIR",
+      "usdPrice": 40,
+      "phpEstimate": 2460,
+      "budgetStatus": "within",
+      "priority": "medium",
+      "holdMonths": "12-18",
+      "sellTarget": "₱3,200–3,500 (+30–42%)",
+      "notes": "Eeveelution collector demand is permanent. Prismatic Evolutions is stable post-release. Look for PH sellers with extras at near-market price. Slow grower but low risk.",
+      "tags": ["Eeveelution", "Prismatic Evolutions", "stable"]
+    }
+  ],
+  "sealedRules": [
+    {
+      "product": "Chaos Rising Booster Bundle",
+      "costPhp": 1999,
+      "minHoldMonths": 6,
+      "sellTargetPhp": 3000,
+      "sellTriggerPct": 50,
+      "riskNote": "Sell half at +50% (₱3,000). Hold rest 12+ months. Watch for reprint announcements."
+    },
+    {
+      "product": "Chaos Rising Blister Pack x2",
+      "costPhp": 1276,
+      "minHoldMonths": 3,
+      "sellTargetPhp": 1800,
+      "sellTriggerPct": 30,
+      "riskNote": "Crack one at 3 months if needed. Hold one sealed 12+ months. Sell trigger per blister: ₱1,700–1,900."
+    },
+    {
+      "product": "Perfect Order Sleeved Blister",
+      "costPhp": 1276,
+      "minHoldMonths": 6,
+      "sellTargetPhp": 1900,
+      "sellTriggerPct": 33,
+      "riskNote": "Hold 6–18 months. Mega Evo block early sets up 20–40%. Target ₱1,700–2,100."
+    }
+  ],
+  "avoidList": [
+    "Random Art Rares of non-popular Pokémon (Patrat, Pignite, Yanma, Clamperl, Shedinja, Electrike, Bibarel)",
+    "Legacy GX cards from Sun & Moon era — soft market, low growth",
+    "McDonald's promos — entertainment, not investment",
+    "Booster bundles as a long-term investment format — worst sealed ROI",
+    "Buying sealed at scalper prices right at launch — wait 4–8 weeks for price correction",
+    "Any card where you cannot name 3 PH buyers who would want it"
+  ],
+  "buyChecklist": [
+    "Is the Pokémon one of: Charizard, Greninja, Gardevoir, Gengar, Mewtwo, Pikachu, Eevee line, Lucario, Umbreon, Rayquaza?",
+    "Is the rarity GG, TG, SIR, or IR (not common/uncommon)?",
+    "Is the set still live or within 12 months of release?",
+    "Is the price at or below US market price in PHP equivalent?",
+    "Can you name 3 PH buyers who would want this right now?",
+    "Do you have a clear exit plan (flip in 3mo / hold 12mo / specific buyer)?"
+  ],
+  "generalNotes": [
+    "GG set is fully out of print — any GG card is a patient long-term hold",
+    "Mega Evolution block (Ascended Heroes, Perfect Order, Chaos Rising) is the hottest block in modern TCG as of mid-2026",
+    "PH local prices typically run 5–20% above US market — factor this into cost basis",
+    "Sealed sell thresholds: +30% for blisters, +50% for bundles, +100% for ETBs and boxes",
+    "If pulled from sealed: never sell a chase SIR immediately — minimum 2–3 month hold",
+    "PSA grading Charizard TG03 could turn ₱2,090 raw into ₱6,000+ graded — consider when budget allows"
+  ]
+}
