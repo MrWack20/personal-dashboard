@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-syne: "Syne", system-ui, sans-serif;
+  --font-dm-sans: "DM Sans", system-ui, sans-serif;
+  --font-dm-mono: "DM Mono", ui-monospace, "Cascadia Code", monospace;
+
+  --bg: #0d0f14;
+  --surface: #161921;
+  --surface2: #1e2230;
+  --border: rgba(255, 255, 255, 0.07);
+  --border2: rgba(255, 255, 255, 0.12);
+  --text: #e8eaf0;
+  --text2: #8890a4;
+  --text3: #555d72;
+  --green: #3dffa0;
+  --green-dim: rgba(61, 255, 160, 0.12);
+  --red: #ff5f5f;
+  --red-dim: rgba(255, 95, 95, 0.12);
+  --amber: #f5b942;
+  --amber-dim: rgba(245, 185, 66, 0.12);
+  --blue: #5b9cf6;
+  --blue-dim: rgba(91, 156, 246, 0.12);
+  --purple: #c084fc;
+  --purple-dim: rgba(192, 132, 252, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-syne), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--green-dim);
+  color: var(--green);
+}
+
+/* ---- Reusable primitives ---- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+}
+
+.mono {
+  font-family: var(--font-dm-mono), monospace;
+}
+
+.tag {
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.divider {
+  border-top: 1px solid var(--border);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface2);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border2);
+}
+
+/* Main two-column split — collapses on narrow screens */
+.dashboard-split {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .dashboard-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Table row hover */
+.holding-row {
+  transition: background 0.12s ease;
+}
+.holding-row:hover {
+  background: var(--surface2);
+}
+
+/* Spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin {
+  animation: spin 0.7s linear infinite;
+}
