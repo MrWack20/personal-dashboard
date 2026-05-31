@@ -82,6 +82,20 @@ function nonEmptyCount(row: string[]): number {
   return row.reduce((n, c) => n + ((c ?? "").trim() ? 1 : 0), 0);
 }
 
+function numericCount(row: string[]): number {
+  return row.reduce((n, c) => {
+    const t = (c ?? "").trim();
+    return n + (t !== "" && cleanNum(t) !== null ? 1 : 0);
+  }, 0);
+}
+
+/** A trailing "TOTAL" / "GRAND TOTAL" / "SUM" row baked into the sheet. */
+function isTotalRow(row: string[]): boolean {
+  const firstText = row.find((c) => (c ?? "").trim() !== "");
+  if (!firstText) return false;
+  return /^(total|grand[\s-]?total|sum|subtotal)$/i.test(firstText.trim());
+}
+
 /** Pick the row most likely to be the column header within the first rows. */
 function detectHeaderRow(matrix: string[][]): number {
   const limit = Math.min(matrix.length, 15);
@@ -139,6 +153,80 @@ function peso(n: number): string {
   return `₱${n.toLocaleString("en-PH", { minimumFractionDigits: n % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 })}`;
 }
 
+/** Pick an accent for a labelled KPI / metric based on its meaning. */
+function accentForLabel(label: string): Aggregate["accent"] {
+  const l = label.toLowerCase();
+  if (/capital|cash|gcash|bank|balance|budget|invested/.test(l)) return "blue";
+  if (/cost|cogs|expense|spent|withdraw|loss/.test(l)) return "red";
+  if (/profit|margin|gross|net|earn|income|gain/.test(l)) return "green";
+  if (/revenue|sales|sold|received/.test(l)) return "green";
+  if (/stock|active|qty|item|order|unit|count|remaining|on hand/.test(l)) return "purple";
+  return "amber";
+}
+
+/** Title-case an ALL-CAPS label; leave mixed-case labels untouched. */
+function titleCase(s: string): string {
+  if (s.length > 1 && s === s.toUpperCase() && /[A-Z]/.test(s)) {
+    return s.toLowerCase().replace(/\b\w/g, (m) => m.toUpperCase());
+  }
+  return s;
+}
+
+/** Normalize a single KPI value cell for display. */
+function formatKpiValue(raw: string): string {
+  const t = raw.trim();
+  if (looksPercent(t)) return t;
+  if (looksCurrency(t)) {
+    const n = cleanNum(t);
+    return n === null ? t : peso(n);
+  }
+  return t;
+}
+
+/**
+ * Many of these sheets carry a pre-computed KPI block at the top: one row of
+ * text labels directly above one row of numbers (e.g. "Total Revenue" over
+ * "₱10,949.98"). When present these authoritative summaries are far more
+ * meaningful than generic column sums, so we surface them as the aggregates.
+ */
+function extractKpis(matrix: string[][]): Aggregate[] {
+  const limit = Math.min(matrix.length - 1, 10);
+  let best: Aggregate[] = [];
+
+  for (let i = 0; i < limit; i++) {
+    const labels = matrix[i] ?? [];
+    const values = matrix[i + 1] ?? [];
+    const after = matrix[i + 2] ?? [];
+
+    const vNum = numericCount(values);
+    if (vNum < 3) continue;
+    // Reject ordinary data rows: a real table keeps going with another numeric
+    // row, a KPI block is followed by blanks / legend / a title.
+    if (numericCount(after) >= vNum * 0.6) continue;
+
+    const kpis: Aggregate[] = [];
+    const width = Math.max(labels.length, values.length);
+    for (let c = 0; c < width; c++) {
+      const label = (labels[c] ?? "").trim().replace(/\s+/g, " ");
+      const val = (values[c] ?? "").trim();
+      if (!label || !hasLetter(label) || label.length > 40 || cleanNum(label) !== null) continue;
+      if (val === "" || cleanNum(val) === null) continue;
+      kpis.push({ label: titleCase(label), display: formatKpiValue(val), accent: accentForLabel(label) });
+    }
+
+    if (kpis.length >= 3 && kpis.length > best.length) best = kpis;
+  }
+
+  return best.slice(0, 8);
+}
+
+/** Find a column by (whitespace/case-insensitive) header label. */
+export function columnIndex(table: TableData, label: string): number {
+  const norm = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
+  const target = norm(label);
+  return table.columns.findIndex((c) => norm(c.label) === target);
+}
+
 /** Build a normalized, typed table from a raw CSV matrix. */
 export function buildTable(matrix: string[][]): TableData {
   const cleaned = matrix.filter((r) => r.length > 0);
@@ -186,7 +274,12 @@ export function buildTable(matrix: string[][]): TableData {
     .map((r) => cols.map((c) => (r[c] ?? "").trim()))
     .filter((r) => r.some((v) => v !== ""));
 
-  const aggregates = buildAggregates(columns, rows);
+  // Prefer a real, pre-computed KPI block from the top of the sheet; otherwise
+  // derive sensible aggregates from the data columns (ignoring any baked-in
+  // TOTAL row so sums aren't double-counted).
+  const kpis = extractKpis(cleaned);
+  const aggregates =
+    kpis.length >= 3 ? kpis : buildAggregates(columns, rows.filter((r) => !isTotalRow(r)));
 
   return {
     columns,
@@ -198,20 +291,19 @@ export function buildTable(matrix: string[][]): TableData {
   };
 }
 
-const ACCENTS: Aggregate["accent"][] = ["blue", "green", "amber", "purple"];
-
 function buildAggregates(columns: ColumnDef[], rows: string[][]): Aggregate[] {
   const out: Aggregate[] = [];
 
   // Row count is always useful.
   out.push({ label: "Rows", display: String(rows.length), accent: "blue" });
 
-  let accentIdx = 0;
-  const nextAccent = () => ACCENTS[(accentIdx++ + 1) % ACCENTS.length];
-
   // "Total Amount" -> "Total Amount" (not "Total Total Amount").
   const totalLabel = (label: string) =>
     /^(total|sum|grand)\b/i.test(label.trim()) ? label : `Total ${label}`;
+
+  // Per-unit / threshold / rate columns sum to meaningless figures — skip them.
+  const SKIP_SUM =
+    /per\s*(bag|unit|piece|pack|item)|unit price|price each|\beach\b|threshold|\bwarn\b|\bcritical\b|tub cost|plastic|sticker|\bavg\b|average|\brate\b|\bmargin\b/i;
 
   for (let i = 0; i < columns.length && out.length < 5; i++) {
     const col = columns[i];
@@ -227,15 +319,17 @@ function buildAggregates(columns: ColumnDef[], rows: string[][]): Aggregate[] {
         accent: "green",
       });
     } else if (col.type === "currency") {
+      if (SKIP_SUM.test(col.label)) continue;
       const sum = vals.reduce((s, v) => s + (cleanNum(v) ?? 0), 0);
-      out.push({ label: totalLabel(col.label), display: peso(sum), accent: nextAccent() });
+      out.push({ label: totalLabel(col.label), display: peso(sum), accent: accentForLabel(col.label) });
     } else if (col.type === "number") {
+      // Only surface number sums that look meaningful (skip id-like & per-unit columns)
+      const looksId = /id|#|no\.?|index|pok[eé]dex/i.test(col.label);
+      if (looksId || SKIP_SUM.test(col.label)) continue;
       const nums = vals.map((v) => cleanNum(v)).filter((n): n is number => n !== null);
       const sum = nums.reduce((s, n) => s + n, 0);
-      // Only surface number sums that look meaningful (skip id-like columns)
-      const looksId = /id|#|no\.?|index|pok[eé]dex/i.test(col.label);
-      if (!looksId && nums.length > 0) {
-        out.push({ label: totalLabel(col.label), display: sum.toLocaleString("en-PH"), accent: nextAccent() });
+      if (nums.length > 0) {
+        out.push({ label: totalLabel(col.label), display: sum.toLocaleString("en-PH"), accent: accentForLabel(col.label) });
       }
     }
   }
@@ -256,4 +350,4 @@ export function formatCell(value: string, type: ColumnType): string {
   return value;
 }
 
-export { isTruthy };
+export { isTruthy, cleanNum };

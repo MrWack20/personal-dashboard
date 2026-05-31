@@ -1,3 +1,16 @@
+export interface StockBreakdown {
+  /** Card heading. */
+  title?: string;
+  /** Header label of the item/product column. */
+  labelColumn: string;
+  /** Header label of the quantity-on-hand column. */
+  valueColumn: string;
+  /** Header label of an optional status column that drives the colour. */
+  statusColumn?: string;
+  /** Unit word shown after totals, e.g. "bags". */
+  unit?: string;
+}
+
 export interface TabOverride {
   /** Display title to use instead of the raw tab name. */
   title?: string;
@@ -5,6 +18,8 @@ export interface TabOverride {
   headerRow?: number;
   /** Lower-priority tabs render last and are de-emphasized. */
   priority?: "normal" | "low";
+  /** Render a compact per-item stock breakdown card above the table. */
+  stockBreakdown?: StockBreakdown;
 }
 
 export interface Module {
@@ -36,6 +51,15 @@ export const modules: Module[] = [
     sheetsId: "1ex175_mhn91t5eh13NW_fZgfKkVSOGC6LBJoAsy9xd8",
     excludeTabs: ["Year 3 Planner"],
     tabOverrides: {
+      Inventory: {
+        stockBreakdown: {
+          title: "Remaining Stock by Product",
+          labelColumn: "Product",
+          valueColumn: "On Hand (Bags)",
+          statusColumn: "Status",
+          unit: "bags",
+        },
+      },
       "Historical 2024-2025": { priority: "low" },
     },
   },

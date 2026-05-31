@@ -1,10 +1,28 @@
 import { cacheGet, cacheSet, cacheDelete } from "./cache";
 import { discoverTabs, fetchTabCsv, parseCsv, sheetUrl } from "./sheetsSource";
-import { buildTable, type TableData } from "./table";
-import { getModule, type Module } from "./modules";
+import { buildTable, columnIndex, cleanNum, type TableData } from "./table";
+import { getModule, type Module, type StockBreakdown } from "./modules";
 
 const TTL_MS = 5 * 60 * 1000;
 const cacheKey = (id: string) => `module:${id}`;
+
+export type BreakdownAccent = "green" | "amber" | "red" | "blue";
+
+export interface BreakdownItem {
+  label: string;
+  value: string;
+  status?: string;
+  accent: BreakdownAccent;
+}
+
+export interface Breakdown {
+  title: string;
+  unit?: string;
+  total: string;
+  inStock: number;
+  outCount: number;
+  items: BreakdownItem[];
+}
 
 export interface TabData {
   name: string;
@@ -13,7 +31,55 @@ export interface TabData {
   url: string;
   priority: "normal" | "low";
   table: TableData | null;
+  breakdown?: Breakdown | null;
   error?: string;
+}
+
+function accentForStatus(status: string, value: number): BreakdownAccent {
+  const s = status.toLowerCase();
+  if (/out of stock|critical|🔴|❌/.test(s) || value <= 0) return "red";
+  if (/low|reorder|🟡/.test(s)) return "amber";
+  if (/ok|healthy|good|✅|🟢/.test(s)) return "green";
+  return "blue";
+}
+
+function buildBreakdown(table: TableData, cfg: StockBreakdown): Breakdown | null {
+  const li = columnIndex(table, cfg.labelColumn);
+  const vi = columnIndex(table, cfg.valueColumn);
+  const si = cfg.statusColumn ? columnIndex(table, cfg.statusColumn) : -1;
+  if (li < 0 || vi < 0) return null;
+
+  const items: BreakdownItem[] = [];
+  let total = 0;
+  let inStock = 0;
+  let outCount = 0;
+
+  for (const row of table.rows) {
+    const label = (row[li] ?? "").trim();
+    if (!label || /^(total|grand[\s-]?total|sum|subtotal)$/i.test(label)) continue;
+    const rawVal = (row[vi] ?? "").trim();
+    const n = cleanNum(rawVal) ?? 0;
+    const status = si >= 0 ? (row[si] ?? "").trim() : "";
+    total += n;
+    if (n > 0) inStock += 1;
+    else outCount += 1;
+    items.push({ label, value: rawVal || "0", status, accent: accentForStatus(status, n) });
+  }
+
+  if (items.length === 0) return null;
+
+  // Lowest stock first so reorder candidates surface at a glance.
+  items.sort((a, b) => (cleanNum(a.value) ?? 0) - (cleanNum(b.value) ?? 0));
+
+  const unit = cfg.unit ? ` ${cfg.unit}` : "";
+  return {
+    title: cfg.title ?? "Stock",
+    unit: cfg.unit,
+    total: `${total.toLocaleString("en-PH")}${unit}`,
+    inStock,
+    outCount,
+    items,
+  };
 }
 
 export interface ModuleData {
@@ -36,6 +102,9 @@ async function loadTab(module: Module, name: string, gid: string): Promise<TabDa
   try {
     const csv = await fetchTabCsv(module.sheetsId, gid);
     base.table = buildTable(parseCsv(csv));
+    if (base.table && !base.table.empty && override.stockBreakdown) {
+      base.breakdown = buildBreakdown(base.table, override.stockBreakdown);
+    }
   } catch (err) {
     base.error = err instanceof Error ? err.message : "Failed to load tab.";
   }
