@@ -1,6 +1,58 @@
 {
   "lastUpdated": "2026-05-30",
   "usdToPhp": 61.47,
+  "goals": [
+    {
+      "title": "Lock in first GG-set hold within ₱5K budget",
+      "priority": "high",
+      "status": "in-progress",
+      "targetPhp": 4100,
+      "savedPhp": 2000,
+      "targetDate": "Q3 2026",
+      "linkedCard": "Regigigas VSTAR (GG55) + Cynthia's Ambition (GG59)",
+      "why": "GG set is fully out of print. The Regigigas + Cynthia pair is the best out-of-print GG exposure achievable inside the ₱5K budget — buy both for a ~₱4,100 combined long-term hold."
+    },
+    {
+      "title": "Secure best TG buy — Umbreon V (TG06)",
+      "priority": "high",
+      "status": "in-progress",
+      "targetPhp": 3690,
+      "savedPhp": 1500,
+      "targetDate": "Q3 2026",
+      "linkedCard": "Umbreon V (TG06)",
+      "why": "Umbreon has one of the deepest fan bases in Pokémon and TG06 is the accessible entry vs the ₱30K+ Evolving Skies VMAX alt. Liquidly sellable in PH."
+    },
+    {
+      "title": "Save toward Origin Forme Palkia VSTAR (GG67)",
+      "priority": "medium",
+      "status": "not-started",
+      "targetPhp": 7070,
+      "savedPhp": 0,
+      "targetDate": "Q4 2026",
+      "linkedCard": "Origin Forme Palkia VSTAR (GG67)",
+      "why": "Lowest-entry card in the 'actually moving' tier of GG (+12.8% in 30 days). The first stretch goal above ₱5K — build a dedicated ₱8–10K pot, then buy."
+    },
+    {
+      "title": "Hold sealed Chaos Rising to minimum hold dates",
+      "priority": "high",
+      "status": "on-track",
+      "targetPhp": 0,
+      "savedPhp": 0,
+      "targetDate": "Nov 2026",
+      "linkedCard": "Chaos Rising Booster Bundle + Blisters",
+      "why": "Discipline goal, not a savings goal. Do NOT crack or sell early. Bundle: hold 6+ mo, sell half at +50%. Blisters: hold 3+ mo. Mega Greninja SIR if pulled — hold 2–3 mo minimum."
+    },
+    {
+      "title": "Add a stable Eeveelution SIR (Sylveon/Espeon)",
+      "priority": "low",
+      "status": "not-started",
+      "targetPhp": 2460,
+      "savedPhp": 0,
+      "targetDate": "Q1 2027",
+      "linkedCard": "Sylveon ex / Espeon ex SIR",
+      "why": "Eeveelution demand is permanent and Prismatic Evolutions is stable post-release. Low-risk slow grower to round out the portfolio once higher-priority buys are done."
+    }
+  ],
   "watchlist": [
     {
       "name": "Giratina VSTAR",

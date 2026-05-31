@@ -3,7 +3,7 @@ import { discoverTabs, fetchTabCsv, parseCsv, sheetUrl } from "./sheetsSource";
 import { buildTable, columnIndex, cleanNum, type TableData } from "./table";
 import { getModule, type Module, type StockBreakdown } from "./modules";
 
-const TTL_MS = 5 * 60 * 1000;
+const TTL_MS = 20 * 1000;
 const cacheKey = (id: string) => `module:${id}`;
 
 export type BreakdownAccent = "green" | "amber" | "red" | "blue";

@@ -1,4 +1,10 @@
-import { intelligence, formatUpdated, type WatchlistItem } from "@/lib/intelligence";
+import {
+  intelligence,
+  formatUpdated,
+  priorityRank,
+  type WatchlistItem,
+  type InvestmentGoal,
+} from "@/lib/intelligence";
 import { peso } from "@/lib/format";
 
 type Accent = "green" | "amber" | "red" | "blue" | "purple";
@@ -77,8 +83,89 @@ const PRIORITY: Record<WatchlistItem["priority"], Accent> = {
   low: "blue",
 };
 
+const GOAL_STATUS: Record<InvestmentGoal["status"], { accent: Accent; label: string }> = {
+  "on-track": { accent: "green", label: "On Track" },
+  "in-progress": { accent: "blue", label: "In Progress" },
+  "not-started": { accent: "amber", label: "Not Started" },
+  done: { accent: "green", label: "Done" },
+};
+
 function usd(n: number): string {
   return `$${n.toLocaleString("en-US")}`;
+}
+
+function GoalCard({ goal }: { goal: InvestmentGoal }) {
+  const status = GOAL_STATUS[goal.status];
+  const accent = PRIORITY[goal.priority];
+  const isSavings = goal.targetPhp > 0;
+  const pct = isSavings ? Math.min(100, Math.round((goal.savedPhp / goal.targetPhp) * 100)) : 0;
+
+  return (
+    <div
+      style={{
+        background: "var(--surface2)",
+        border: "1px solid var(--border)",
+        borderLeft: `3px solid ${ACCENT_VAR[accent]}`,
+        borderRadius: "12px",
+        padding: "0.9rem 1rem",
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.6rem",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.6rem" }}>
+        <div style={{ fontFamily: "var(--font-syne), sans-serif", fontWeight: 700, fontSize: "0.95rem", lineHeight: 1.3 }}>
+          {goal.title}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", alignItems: "flex-end" }}>
+          <Badge accent={accent}>{goal.priority} priority</Badge>
+          <Badge accent={status.accent}>{status.label}</Badge>
+        </div>
+      </div>
+
+      {goal.linkedCard ? (
+        <div className="mono" style={{ fontSize: "0.72rem", color: "var(--text2)" }}>
+          → {goal.linkedCard}
+        </div>
+      ) : null}
+
+      {isSavings ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.74rem" }}>
+            <span className="mono" style={{ color: ACCENT_VAR[accent] }}>
+              {peso(goal.savedPhp)} / {peso(goal.targetPhp)}
+            </span>
+            <span className="mono" style={{ color: "var(--text3)" }}>
+              {pct}% · target {goal.targetDate}
+            </span>
+          </div>
+          <div
+            style={{
+              height: "6px",
+              borderRadius: "999px",
+              background: "var(--surface)",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                width: `${pct}%`,
+                height: "100%",
+                borderRadius: "999px",
+                background: ACCENT_VAR[accent],
+              }}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="mono" style={{ fontSize: "0.74rem", color: "var(--text3)" }}>
+          Discipline goal · target {goal.targetDate}
+        </div>
+      )}
+
+      <p style={{ color: "var(--text2)", fontSize: "0.76rem", lineHeight: 1.5 }}>{goal.why}</p>
+    </div>
+  );
 }
 
 function Row({ label, value, accent }: { label: string; value: string; accent?: Accent }) {
@@ -145,6 +232,8 @@ function WatchCard({ item }: { item: WatchlistItem }) {
 
 export default function InvestmentIntelligence() {
   const data = intelligence;
+  const goals = [...data.goals].sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
+  const watchlist = [...data.watchlist].sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
 
   return (
     <section style={{ marginTop: "2rem" }}>
@@ -169,7 +258,23 @@ export default function InvestmentIntelligence() {
         </span>
       </div>
 
-      {/* 1 — Watchlist */}
+      {/* 1 — Goals (priority-ordered) */}
+      <div className="card" style={{ marginBottom: "1rem" }}>
+        <SubHeader tag="GOALS" title="Stay on track — priority order" />
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: "0.85rem",
+          }}
+        >
+          {goals.map((goal) => (
+            <GoalCard key={goal.title} goal={goal} />
+          ))}
+        </div>
+      </div>
+
+      {/* 2 — Watchlist */}
       <div className="card" style={{ marginBottom: "1rem" }}>
         <SubHeader tag="WATCHLIST" title="Cards to find in PH" />
         <div
@@ -179,13 +284,13 @@ export default function InvestmentIntelligence() {
             gap: "0.85rem",
           }}
         >
-          {data.watchlist.map((item) => (
+          {watchlist.map((item) => (
             <WatchCard key={`${item.name}-${item.cardNumber}`} item={item} />
           ))}
         </div>
       </div>
 
-      {/* 2 — Sealed hold rules */}
+      {/* 3 — Sealed hold rules */}
       <div className="card" style={{ marginBottom: "1rem" }}>
         <SubHeader tag="SEALED PRODUCTS" title="Hold &amp; sell rules" />
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -224,7 +329,7 @@ export default function InvestmentIntelligence() {
         </div>
       </div>
 
-      {/* 3 — Buy checklist */}
+      {/* 4 — Buy checklist */}
       <div className="card" style={{ marginBottom: "1rem" }}>
         <SubHeader tag="CHECKLIST" title="Run this before every purchase" />
         <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -241,7 +346,7 @@ export default function InvestmentIntelligence() {
         </ol>
       </div>
 
-      {/* 4 — Avoid + Notes */}
+      {/* 5 — Avoid + Notes */}
       <div className="dashboard-split">
         <div className="card">
           <SubHeader tag="AVOID" title="Avoid these" />

@@ -15,6 +15,17 @@ export interface WatchlistItem {
   tags: string[];
 }
 
+export interface InvestmentGoal {
+  title: string;
+  priority: "high" | "medium" | "low";
+  status: "on-track" | "in-progress" | "not-started" | "done";
+  targetPhp: number;
+  savedPhp: number;
+  targetDate: string;
+  linkedCard?: string;
+  why: string;
+}
+
 export interface SealedRule {
   product: string;
   costPhp: number;
@@ -27,6 +38,7 @@ export interface SealedRule {
 export interface InvestmentIntelligence {
   lastUpdated: string;
   usdToPhp: number;
+  goals: InvestmentGoal[];
   watchlist: WatchlistItem[];
   sealedRules: SealedRule[];
   avoidList: string[];
@@ -36,6 +48,11 @@ export interface InvestmentIntelligence {
 
 /** Static, manually-maintained intelligence data (edit public/intelligence.json). */
 export const intelligence = raw as InvestmentIntelligence;
+
+/** Sort rank for priority — high first, low last. */
+export function priorityRank(p: "high" | "medium" | "low"): number {
+  return p === "high" ? 0 : p === "medium" ? 1 : 2;
+}
 
 /** Format an ISO date (YYYY-MM-DD) as "May 30, 2026" without timezone drift. */
 export function formatUpdated(iso: string): string {
