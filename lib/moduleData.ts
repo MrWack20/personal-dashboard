@@ -1,7 +1,7 @@
 import { cacheGet, cacheSet, cacheDelete } from "./cache";
 import { discoverTabs, fetchTabCsv, parseCsv, sheetUrl } from "./sheetsSource";
 import { buildTable, columnIndex, cleanNum, type TableData } from "./table";
-import { getModule, type Module, type StockBreakdown } from "./modules";
+import { getModule, type Module, type StockBreakdown, type TabOverride } from "./modules";
 
 const TTL_MS = 20 * 1000;
 const cacheKey = (id: string) => `module:${id}`;
@@ -89,18 +89,22 @@ export interface ModuleData {
   lastFetched: string;
 }
 
-async function loadTab(module: Module, name: string, gid: string): Promise<TabData> {
-  const override = module.tabOverrides?.[name] ?? {};
+async function loadTab(
+  sheetsId: string,
+  name: string,
+  gid: string,
+  override: TabOverride = {},
+): Promise<TabData> {
   const base: TabData = {
     name,
     title: override.title ?? name,
     gid,
-    url: sheetUrl(module.sheetsId, gid),
+    url: sheetUrl(sheetsId, gid),
     priority: override.priority ?? "normal",
     table: null,
   };
   try {
-    const csv = await fetchTabCsv(module.sheetsId, gid);
+    const csv = await fetchTabCsv(sheetsId, gid);
     base.table = buildTable(parseCsv(csv));
     if (base.table && !base.table.empty && override.stockBreakdown) {
       base.breakdown = buildBreakdown(base.table, override.stockBreakdown);
@@ -116,7 +120,9 @@ async function fetchModuleData(module: Module): Promise<ModuleData> {
   const excluded = new Set(module.excludeTabs ?? []);
   const wanted = discovered.filter((t) => !excluded.has(t.title));
 
-  const tabs = await Promise.all(wanted.map((t) => loadTab(module, t.title, t.gid)));
+  const tabs = await Promise.all(
+    wanted.map((t) => loadTab(module.sheetsId, t.title, t.gid, module.tabOverrides?.[t.title])),
+  );
 
   // Normal-priority tabs first (preserving sheet order), low-priority last.
   tabs.sort((a, b) => {
@@ -147,4 +153,33 @@ export async function getModuleData(moduleId: string): Promise<ModuleData> {
 export async function refreshModuleData(moduleId: string): Promise<ModuleData> {
   cacheDelete(cacheKey(moduleId));
   return getModuleData(moduleId);
+}
+
+/** Data for an arbitrary (user-added) spreadsheet — no module registration. */
+export interface SheetData {
+  sheetsId: string;
+  sheetUrl: string;
+  tabs: TabData[];
+  lastFetched: string;
+}
+
+async function fetchSheetData(sheetsId: string): Promise<SheetData> {
+  const discovered = await discoverTabs(sheetsId);
+  const tabs = await Promise.all(discovered.map((t) => loadTab(sheetsId, t.title, t.gid)));
+  return {
+    sheetsId,
+    sheetUrl: sheetUrl(sheetsId),
+    tabs,
+    lastFetched: new Date().toISOString(),
+  };
+}
+
+/** Fetch (and briefly cache) any public spreadsheet by its ID. */
+export async function getSheetData(sheetsId: string): Promise<SheetData> {
+  const key = `sheet:${sheetsId}`;
+  const cached = cacheGet<SheetData>(key);
+  if (cached) return cached;
+  const data = await fetchSheetData(sheetsId);
+  cacheSet(key, data, TTL_MS);
+  return data;
 }

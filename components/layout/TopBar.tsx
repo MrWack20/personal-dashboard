@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ModuleTabs from "./ModuleTabs";
+import UserSheetTabs from "./UserSheetTabs";
 import { timeAgo } from "@/lib/format";
 import type { Module } from "@/lib/modules";
 
@@ -11,12 +12,14 @@ export default function TopBar({
   lastFetched,
   modules,
   activeModuleId,
+  activeSheetId,
   sheetUrl,
 }: {
   title: string;
   lastFetched: string;
   modules: Module[];
   activeModuleId: string;
+  activeSheetId: string;
   sheetUrl: string;
 }) {
   const router = useRouter();
@@ -86,9 +89,13 @@ export default function TopBar({
           flexWrap: "wrap",
         }}
       >
-        <ModuleTabs modules={modules} activeId={activeModuleId} />
+        <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap", flex: "1 1 auto", minWidth: 0 }}>
+          <ModuleTabs modules={modules} activeId={activeModuleId} />
+          <UserSheetTabs activeSheetId={activeSheetId} />
+        </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
+        {!activeSheetId ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
           <a
             href={sheetUrl}
             target="_blank"
@@ -148,7 +155,8 @@ export default function TopBar({
             </span>
             {refreshing ? "Refreshing…" : "Refresh"}
           </button>
-        </div>
+          </div>
+        ) : null}
       </div>
     </header>
   );

@@ -5,6 +5,7 @@ import SummaryCards from "./SummaryCards";
 import DataTable from "./DataTable";
 import StockBreakdown from "./StockBreakdown";
 import SheetEditor from "./SheetEditor";
+import AutoCharts from "@/components/charts/AutoCharts";
 import type { ModuleData } from "@/lib/moduleData";
 
 const SECRET_KEY = "dashboard-edit-secret";
@@ -214,6 +215,7 @@ export default function ModuleView({ data }: { data: ModuleData }) {
         <>
           <SummaryCards aggregates={tab.table.aggregates} />
           {tab.breakdown ? <StockBreakdown data={tab.breakdown} /> : null}
+          <AutoCharts table={tab.table} />
           <DataTable columns={tab.table.columns} rows={tab.table.rows} />
         </>
       ) : (
