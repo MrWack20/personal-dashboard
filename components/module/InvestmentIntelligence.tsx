@@ -1,6 +1,8 @@
 import {
   intelligence,
   formatUpdated,
+  formatShort,
+  daysSince,
   priorityRank,
   type WatchlistItem,
   type InvestmentGoal,
@@ -182,6 +184,45 @@ function Row({ label, value, accent }: { label: string; value: string; accent?: 
   );
 }
 
+function PriceFreshness({ item }: { item: WatchlistItem }) {
+  const age = daysSince(item.priceUpdated);
+  const src = item.priceSource ? ` · ${item.priceSource}` : "";
+
+  let accent: Accent;
+  let mark: string;
+  let text: string;
+  if (!item.priceUpdated || age === null) {
+    accent = "amber";
+    mark = "≈";
+    text = `Estimate — awaiting daily verification${src}`;
+  } else if (age <= 2) {
+    accent = "green";
+    mark = "✓";
+    text = `Verified ${formatShort(item.priceUpdated)}${src}`;
+  } else {
+    accent = "amber";
+    mark = "⚠";
+    text = `Last checked ${formatShort(item.priceUpdated)} (${age}d ago)${src}`;
+  }
+
+  return (
+    <div
+      className="mono"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.35rem",
+        fontSize: "0.66rem",
+        color: ACCENT_VAR[accent],
+      }}
+      title="Market price (USD) is the verified figure; PHP is a converted estimate."
+    >
+      <span aria-hidden>{mark}</span>
+      <span>{text}</span>
+    </div>
+  );
+}
+
 function WatchCard({ item }: { item: WatchlistItem }) {
   const budget = BUDGET[item.budgetStatus];
   return (
@@ -213,11 +254,13 @@ function WatchCard({ item }: { item: WatchlistItem }) {
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-        <Row label="US Price" value={usd(item.usdPrice)} />
-        <Row label="PHP Est." value={peso(item.phpEstimate)} />
+        <Row label="Market (USD)" value={usd(item.usdPrice)} />
+        <Row label="PHP (≈ converted)" value={peso(item.phpEstimate)} />
         <Row label="Hold" value={`${item.holdMonths} mo`} />
         <Row label="Sell Target" value={item.sellTarget} accent="green" />
       </div>
+
+      <PriceFreshness item={item} />
 
       <p style={{ color: "var(--text2)", fontSize: "0.76rem", lineHeight: 1.5 }}>{item.notes}</p>
 
@@ -253,9 +296,14 @@ export default function InvestmentIntelligence() {
             Buy, Hold &amp; Sell Playbook
           </h2>
         </div>
-        <span className="mono" style={{ fontSize: "0.74rem", color: "var(--text3)" }}>
-          Updated {formatUpdated(data.lastUpdated)} · $1 ≈ ₱{data.usdToPhp}
-        </span>
+        <div style={{ textAlign: "right" }}>
+          <span className="mono" style={{ fontSize: "0.74rem", color: "var(--text3)", display: "block" }}>
+            Updated {formatUpdated(data.lastUpdated)} · $1 ≈ ₱{data.usdToPhp}
+          </span>
+          <span className="mono" style={{ fontSize: "0.66rem", color: "var(--green)", display: "block", marginTop: "0.15rem" }}>
+            ✓ Prices auto-verified daily at 4 AM
+          </span>
+        </div>
       </div>
 
       {/* 1 — Goals (priority-ordered) */}

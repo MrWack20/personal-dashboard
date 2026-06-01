@@ -66,7 +66,9 @@
       "holdMonths": "12-24",
       "sellTarget": "Save — aspirational target only",
       "notes": "King of the GG set. Up +64.6% in 30 days as of May 2026. 6th most trending card globally. Way over ₱5K budget but the card to aim for long-term.",
-      "tags": ["trending", "out of print", "GG set"]
+      "tags": ["trending", "out of print", "GG set"],
+      "priceUpdated": "2026-05-30",
+      "priceSource": "TCGplayer market"
     },
     {
       "name": "Origin Forme Palkia VSTAR",
@@ -80,7 +82,9 @@
       "holdMonths": "12-24",
       "sellTarget": "₱9,000–10,000 (+27–41%)",
       "notes": "Up +12.8% in 30 days. Lowest-entry card in the 'actually moving' tier of GG. Save to ₱8–10K budget then buy this. Part of the God trio with Dialga and Giratina.",
-      "tags": ["save for this", "God trio", "GG set"]
+      "tags": ["save for this", "God trio", "GG set"],
+      "priceUpdated": "2026-05-30",
+      "priceSource": "TCGplayer market"
     },
     {
       "name": "Regigigas VSTAR",
@@ -94,7 +98,9 @@
       "holdMonths": "12-18",
       "sellTarget": "₱3,500–4,000 (+30–48%)",
       "notes": "Best GG card accessible within ₱5K budget. Out-of-print set. Slow grower but steady. Pair with Cynthia's Ambition for a ~₱4,100 combined GG play.",
-      "tags": ["₱5K budget", "within reach", "GG set"]
+      "tags": ["₱5K budget", "within reach", "GG set"],
+      "priceUpdated": "2026-05-30",
+      "priceSource": "TCGplayer market"
     },
     {
       "name": "Cynthia's Ambition",
@@ -108,7 +114,9 @@
       "holdMonths": "12-18",
       "sellTarget": "₱1,900–2,200 (+35–56%)",
       "notes": "Trainer supporter card. Cynthia is one of the most beloved characters in the franchise — GG trainer cards are underpriced vs Pokémon cards. Sleeper pick. Pairs with Regigigas for ~₱4,100 combined.",
-      "tags": ["sleeper", "underpriced", "GG trainer card"]
+      "tags": ["sleeper", "underpriced", "GG trainer card"],
+      "priceUpdated": "2026-05-30",
+      "priceSource": "TCGplayer market"
     },
     {
       "name": "Umbreon V",
@@ -122,7 +130,9 @@
       "holdMonths": "12-18",
       "sellTarget": "₱5,000–5,500 (+35–49%)",
       "notes": "Best TG buy within ₱5K budget. Umbreon has one of the deepest fan bases in Pokémon. Accessible entry point vs the ₱30,000+ Evolving Skies Umbreon VMAX Alt Art. Liquidly sellable in PH.",
-      "tags": ["₱5K budget", "TG set", "Umbreon demand"]
+      "tags": ["₱5K budget", "TG set", "Umbreon demand"],
+      "priceUpdated": "2026-05-30",
+      "priceSource": "TCGplayer market"
     },
     {
       "name": "Pikachu VMAX",
@@ -136,7 +146,9 @@
       "holdMonths": "12-24",
       "sellTarget": "Save — aspirational TG target",
       "notes": "The top TG card from Lost Origin. Pikachu + VMAX treatment. Far out of ₱5K range but the TG card to save toward after GG67.",
-      "tags": ["save for this", "TG set", "Pikachu demand"]
+      "tags": ["save for this", "TG set", "Pikachu demand"],
+      "priceUpdated": "2026-05-30",
+      "priceSource": "TCGplayer market"
     },
     {
       "name": "Pikachu",
@@ -150,7 +162,9 @@
       "holdMonths": "6-12",
       "sellTarget": "₱2,600–2,800 (+28–38%)",
       "notes": "Last card in the TG set — collectors chasing full TG sets need this. Pikachu demand is eternal. Liquidly sellable in PH. Good complement to TG03 Charizard already in portfolio.",
-      "tags": ["₱5K budget", "TG set", "Pikachu demand"]
+      "tags": ["₱5K budget", "TG set", "Pikachu demand"],
+      "priceUpdated": "2026-05-30",
+      "priceSource": "TCGplayer market"
     },
     {
       "name": "Mega Greninja ex SIR",
@@ -164,7 +178,9 @@
       "holdMonths": "2-3",
       "sellTarget": "₱10,000–15,000+ (wait 2–3 months post-pull)",
       "notes": "The #1 chase card of 2026 so far. Mega Evo block SIRs have opened at $100+ day-one and hit $400+ within months. If pulled from sealed Chaos Rising product — DO NOT sell immediately. Hold 2–3 months minimum. If buying raw from PH seller, target under ₱6,000.",
-      "tags": ["hottest 2026", "Chaos Rising", "from your sealed"]
+      "tags": ["hottest 2026", "Chaos Rising", "from your sealed"],
+      "priceUpdated": "2026-05-30",
+      "priceSource": "eBay sold listings"
     },
     {
       "name": "Sylveon ex / Espeon ex SIR",
@@ -178,7 +194,9 @@
       "holdMonths": "12-18",
       "sellTarget": "₱3,200–3,500 (+30–42%)",
       "notes": "Eeveelution collector demand is permanent. Prismatic Evolutions is stable post-release. Look for PH sellers with extras at near-market price. Slow grower but low risk.",
-      "tags": ["Eeveelution", "Prismatic Evolutions", "stable"]
+      "tags": ["Eeveelution", "Prismatic Evolutions", "stable"],
+      "priceUpdated": "2026-05-30",
+      "priceSource": "TCGplayer market"
     }
   ],
   "sealedRules": [
