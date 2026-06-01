@@ -281,7 +281,7 @@ function BudgetCard({ item }: { item: BudgetListItem }) {
   );
 }
 
-export default function PriorityLists() {
+export default function PriorityLists({ embedded = false }: { embedded?: boolean } = {}) {
   const data = priorityList;
   const [tab, setTab] = useState<"full" | "budget">("full");
 
@@ -291,7 +291,7 @@ export default function PriorityLists() {
   ];
 
   return (
-    <section style={{ marginTop: "2rem" }}>
+    <section style={{ marginTop: embedded ? 0 : "2rem" }}>
       <div
         style={{
           display: "flex",

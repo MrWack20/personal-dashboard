@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import {
   intelligence,
   formatUpdated,
@@ -12,6 +15,7 @@ import {
   type HoldingAction,
 } from "@/lib/intelligence";
 import { peso } from "@/lib/format";
+import PriorityLists from "./PriorityLists";
 
 type Accent = "green" | "amber" | "red" | "blue" | "purple";
 
@@ -147,7 +151,7 @@ function HoldingsCard({ holdings }: { holdings: HoldingCall[] }) {
         </span>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(330px, 1fr))", gap: "0.5rem" }}>
         {rows.map((h, i) => {
           const accent = ACTION_ACCENT[h.action];
           const canon = normalizeStatus(h.status);
@@ -161,11 +165,13 @@ function HoldingsCard({ holdings }: { holdings: HoldingCall[] }) {
               key={`${h.card}-${i}`}
               style={{
                 display: "grid",
-                gridTemplateColumns: "minmax(0, 1.7fr) auto",
+                gridTemplateColumns: "minmax(0, 1fr) auto",
                 gap: "0.5rem 0.75rem",
                 alignItems: "start",
-                borderTop: i === 0 ? "none" : "1px solid var(--border)",
-                paddingTop: i === 0 ? 0 : "0.4rem",
+                background: "var(--surface2)",
+                border: "1px solid var(--border)",
+                borderRadius: "10px",
+                padding: "0.6rem 0.75rem",
               }}
             >
               <div style={{ minWidth: 0 }}>
@@ -379,10 +385,24 @@ function WatchCard({ item }: { item: WatchlistItem }) {
   );
 }
 
+type IntelTab = "goals" | "holdings" | "watchlist" | "buylists" | "playbook";
+
 export default function InvestmentIntelligence() {
   const data = intelligence;
+  const [tab, setTab] = useState<IntelTab>("goals");
+
   const goals = [...data.goals].sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
   const watchlist = [...data.watchlist].sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
+  const holdings = data.holdings ?? [];
+  const hasHoldings = holdings.length > 0;
+
+  const tabs: { id: IntelTab; label: string; badge?: number }[] = [
+    { id: "goals", label: "Goals", badge: goals.length },
+    ...(hasHoldings ? [{ id: "holdings" as IntelTab, label: "Holdings", badge: holdings.length }] : []),
+    { id: "watchlist", label: "Watchlist", badge: watchlist.length },
+    { id: "buylists", label: "Buy Lists" },
+    { id: "playbook", label: "Playbook" },
+  ];
 
   return (
     <section style={{ marginTop: "2rem" }}>
@@ -412,122 +432,164 @@ export default function InvestmentIntelligence() {
         </div>
       </div>
 
-      {/* 1 — Goals (priority-ordered) */}
-      <div className="card" style={{ marginBottom: "1rem" }}>
-        <SubHeader tag="GOALS" title="Stay on track — priority order" />
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-            gap: "0.85rem",
-          }}
-        >
-          {goals.map((goal) => (
-            <GoalCard key={goal.title} goal={goal} />
-          ))}
-        </div>
-      </div>
-
-      {/* 2 — Your holdings (hold/sell calls) */}
-      {data.holdings && data.holdings.length > 0 ? <HoldingsCard holdings={data.holdings} /> : null}
-
-      {/* 3 — Watchlist */}
-      <div className="card" style={{ marginBottom: "1rem" }}>
-        <SubHeader tag="WATCHLIST" title="Cards to find in PH" />
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-            gap: "0.85rem",
-          }}
-        >
-          {watchlist.map((item) => (
-            <WatchCard key={`${item.name}-${item.cardNumber}`} item={item} />
-          ))}
-        </div>
-      </div>
-
-      {/* 4 — Sealed hold rules */}
-      <div className="card" style={{ marginBottom: "1rem" }}>
-        <SubHeader tag="SEALED PRODUCTS" title="Hold &amp; sell rules" />
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-          {data.sealedRules.map((rule) => (
-            <div
-              key={rule.product}
+      {/* Section nav — one panel at a time to keep scrolling short */}
+      <div style={{ display: "flex", gap: "0.4rem", marginBottom: "1rem", flexWrap: "wrap" }}>
+        {tabs.map((t) => {
+          const active = t.id === tab;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className="mono"
               style={{
-                borderTop: "1px solid var(--border)",
-                paddingTop: "0.75rem",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.4rem",
+                padding: "0.4rem 0.9rem",
+                fontSize: "0.78rem",
+                borderRadius: "8px",
+                background: active ? "var(--green-dim)" : "var(--surface2)",
+                color: active ? "var(--green)" : "var(--text2)",
+                border: `1px solid ${active ? "var(--green)" : "var(--border)"}`,
+                fontWeight: active ? 700 : 400,
               }}
             >
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1.6fr 1fr 1fr 1.4fr 0.8fr",
-                  gap: "0.6rem",
-                  alignItems: "baseline",
-                }}
-              >
-                <span style={{ fontWeight: 700, fontSize: "0.85rem" }}>{rule.product}</span>
-                <Row label="Cost" value={peso(rule.costPhp)} />
-                <Row label="Min Hold" value={`${rule.minHoldMonths} mo`} />
-                <Row label="Sell Target" value={peso(rule.sellTargetPhp)} />
-                <span
-                  className="mono"
-                  style={{ color: "var(--green)", textAlign: "right", fontSize: "0.85rem", fontWeight: 500 }}
-                >
-                  +{rule.sellTriggerPct}%
+              {t.label}
+              {typeof t.badge === "number" ? (
+                <span style={{ color: active ? "var(--green)" : "var(--text3)", fontSize: "0.7rem", opacity: 0.85 }}>
+                  {t.badge}
                 </span>
-              </div>
-              <p style={{ color: "var(--text3)", fontSize: "0.74rem", lineHeight: 1.5, marginTop: "0.35rem" }}>
-                {rule.riskNote}
-              </p>
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Goals */}
+      {tab === "goals" ? (
+        <div className="card">
+          <SubHeader tag="GOALS" title="Stay on track — priority order" />
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+              gap: "0.85rem",
+            }}
+          >
+            {goals.map((goal) => (
+              <GoalCard key={goal.title} goal={goal} />
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Holdings (hold/sell calls) */}
+      {tab === "holdings" && hasHoldings ? <HoldingsCard holdings={holdings} /> : null}
+
+      {/* Watchlist */}
+      {tab === "watchlist" ? (
+        <div className="card">
+          <SubHeader tag="WATCHLIST" title="Cards to find in PH" />
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+              gap: "0.85rem",
+            }}
+          >
+            {watchlist.map((item) => (
+              <WatchCard key={`${item.name}-${item.cardNumber}`} item={item} />
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Buy Lists — nested priority lists with their own Full / 5K-7K sub-tabs */}
+      {tab === "buylists" ? <PriorityLists embedded /> : null}
+
+      {/* Playbook — sealed rules, checklist, avoid, notes */}
+      {tab === "playbook" ? (
+        <>
+          <div className="card" style={{ marginBottom: "1rem" }}>
+            <SubHeader tag="SEALED PRODUCTS" title="Hold &amp; sell rules" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              {data.sealedRules.map((rule) => (
+                <div
+                  key={rule.product}
+                  style={{
+                    borderTop: "1px solid var(--border)",
+                    paddingTop: "0.75rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1.6fr 1fr 1fr 1.4fr 0.8fr",
+                      gap: "0.6rem",
+                      alignItems: "baseline",
+                    }}
+                  >
+                    <span style={{ fontWeight: 700, fontSize: "0.85rem" }}>{rule.product}</span>
+                    <Row label="Cost" value={peso(rule.costPhp)} />
+                    <Row label="Min Hold" value={`${rule.minHoldMonths} mo`} />
+                    <Row label="Sell Target" value={peso(rule.sellTargetPhp)} />
+                    <span
+                      className="mono"
+                      style={{ color: "var(--green)", textAlign: "right", fontSize: "0.85rem", fontWeight: 500 }}
+                    >
+                      +{rule.sellTriggerPct}%
+                    </span>
+                  </div>
+                  <p style={{ color: "var(--text3)", fontSize: "0.74rem", lineHeight: 1.5, marginTop: "0.35rem" }}>
+                    {rule.riskNote}
+                  </p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {/* 5 — Buy checklist */}
-      <div className="card" style={{ marginBottom: "1rem" }}>
-        <SubHeader tag="CHECKLIST" title="Run this before every purchase" />
-        <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-          {data.buyChecklist.map((item, i) => (
-            <li
-              key={i}
-              className="mono"
-              style={{ display: "flex", gap: "0.6rem", fontSize: "0.8rem", color: "var(--text2)", lineHeight: 1.5 }}
-            >
-              <span style={{ color: "var(--green)", fontWeight: 500 }}>{String(i + 1).padStart(2, "0")}</span>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ol>
-      </div>
+          <div className="card" style={{ marginBottom: "1rem" }}>
+            <SubHeader tag="CHECKLIST" title="Run this before every purchase" />
+            <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              {data.buyChecklist.map((item, i) => (
+                <li
+                  key={i}
+                  className="mono"
+                  style={{ display: "flex", gap: "0.6rem", fontSize: "0.8rem", color: "var(--text2)", lineHeight: 1.5 }}
+                >
+                  <span style={{ color: "var(--green)", fontWeight: 500 }}>{String(i + 1).padStart(2, "0")}</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
 
-      {/* 6 — Avoid + Notes */}
-      <div className="dashboard-split">
-        <div className="card">
-          <SubHeader tag="AVOID" title="Avoid these" />
-          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            {data.avoidList.map((item, i) => (
-              <li key={i} style={{ display: "flex", gap: "0.5rem", fontSize: "0.8rem", lineHeight: 1.5 }}>
-                <span style={{ color: "var(--red)" }}>✕</span>
-                <span style={{ color: "var(--text2)" }}>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="card">
-          <SubHeader tag="NOTES" title="General notes" />
-          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            {data.generalNotes.map((item, i) => (
-              <li key={i} style={{ display: "flex", gap: "0.5rem", fontSize: "0.8rem", lineHeight: 1.5 }}>
-                <span style={{ color: "var(--blue)" }}>›</span>
-                <span style={{ color: "var(--text2)" }}>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+          <div className="dashboard-split">
+            <div className="card">
+              <SubHeader tag="AVOID" title="Avoid these" />
+              <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                {data.avoidList.map((item, i) => (
+                  <li key={i} style={{ display: "flex", gap: "0.5rem", fontSize: "0.8rem", lineHeight: 1.5 }}>
+                    <span style={{ color: "var(--red)" }}>✕</span>
+                    <span style={{ color: "var(--text2)" }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="card">
+              <SubHeader tag="NOTES" title="General notes" />
+              <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                {data.generalNotes.map((item, i) => (
+                  <li key={i} style={{ display: "flex", gap: "0.5rem", fontSize: "0.8rem", lineHeight: 1.5 }}>
+                    <span style={{ color: "var(--blue)" }}>›</span>
+                    <span style={{ color: "var(--text2)" }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </>
+      ) : null}
     </section>
   );
 }
