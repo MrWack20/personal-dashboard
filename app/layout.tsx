@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 const title = process.env.NEXT_PUBLIC_DASHBOARD_TITLE || "Joaquin's Command Center";
@@ -6,6 +6,24 @@ const title = process.env.NEXT_PUBLIC_DASHBOARD_TITLE || "Joaquin's Command Cent
 export const metadata: Metadata = {
   title,
   description: "Personal dashboard — live data from Google Sheets.",
+  applicationName: "Command Center",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black",
+    title: "Command Center",
+  },
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/apple-touch-icon.png",
+  },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0d0f14",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
