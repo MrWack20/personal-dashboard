@@ -4,8 +4,12 @@ import {
   formatShort,
   daysSince,
   priorityRank,
+  actionRank,
+  normalizeStatus,
   type WatchlistItem,
   type InvestmentGoal,
+  type HoldingCall,
+  type HoldingAction,
 } from "@/lib/intelligence";
 import { peso } from "@/lib/format";
 
@@ -94,6 +98,108 @@ const GOAL_STATUS: Record<InvestmentGoal["status"], { accent: Accent; label: str
 
 function usd(n: number): string {
   return `$${n.toLocaleString("en-US")}`;
+}
+
+const ACTION_ACCENT: Record<HoldingAction, Accent> = {
+  "SELL NOW": "red",
+  "SELL IF OFFERED": "amber",
+  WATCH: "blue",
+  HOLD: "green",
+  "HOLD STRONG": "green",
+};
+
+const STATUS_META: Record<"Holding" | "Collection" | "For Sale", { accent: Accent; label: string }> = {
+  Holding: { accent: "blue", label: "Holding" },
+  Collection: { accent: "purple", label: "Collection" },
+  "For Sale": { accent: "amber", label: "For Sale" },
+};
+
+function HoldingsCard({ holdings }: { holdings: HoldingCall[] }) {
+  const rows = [...holdings].sort((a, b) => actionRank(a.action) - actionRank(b.action));
+
+  let holding = 0;
+  let collection = 0;
+  let forSale = 0;
+  let sellSignals = 0;
+  for (const h of holdings) {
+    const s = normalizeStatus(h.status);
+    if (s === "Collection") collection += 1;
+    else if (s === "For Sale") forSale += 1;
+    else holding += 1;
+    if (h.action === "SELL NOW" || h.action === "SELL IF OFFERED") sellSignals += 1;
+  }
+
+  return (
+    <div className="card" style={{ marginBottom: "1rem" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+          gap: "1rem",
+          flexWrap: "wrap",
+          marginBottom: "0.85rem",
+        }}
+      >
+        <SubHeader tag="YOUR HOLDINGS" title="Hold / sell call per owned card" />
+        <span className="mono" style={{ fontSize: "0.72rem", color: "var(--text3)" }}>
+          {holding} holding · {collection} collection · {forSale} for sale · {sellSignals} sell signals
+        </span>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+        {rows.map((h, i) => {
+          const accent = ACTION_ACCENT[h.action];
+          const canon = normalizeStatus(h.status);
+          const statusMeta = canon ? STATUS_META[canon] : null;
+          const gainPct =
+            h.costPhp && h.costPhp > 0 && typeof h.valuePhp === "number"
+              ? Math.round(((h.valuePhp - h.costPhp) / h.costPhp) * 100)
+              : null;
+          return (
+            <div
+              key={`${h.card}-${i}`}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "minmax(0, 1.7fr) auto",
+                gap: "0.5rem 0.75rem",
+                alignItems: "start",
+                borderTop: i === 0 ? "none" : "1px solid var(--border)",
+                paddingTop: i === 0 ? 0 : "0.4rem",
+              }}
+            >
+              <div style={{ minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", flexWrap: "wrap" }}>
+                  <span style={{ fontWeight: 600, fontSize: "0.84rem", color: "var(--text)" }}>{h.card}</span>
+                  {statusMeta ? <Badge accent={statusMeta.accent}>{statusMeta.label}</Badge> : null}
+                </div>
+                <div style={{ color: "var(--text3)", fontSize: "0.72rem", lineHeight: 1.45, marginTop: "0.15rem" }}>
+                  {h.reason}
+                </div>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.25rem", whiteSpace: "nowrap" }}>
+                <Badge accent={accent}>{h.action}</Badge>
+                <span className="mono" style={{ fontSize: "0.7rem", color: "var(--text3)" }}>
+                  {typeof h.valuePhp === "number"
+                    ? `${peso(h.valuePhp)}${gainPct !== null ? ` · ${gainPct >= 0 ? "+" : ""}${gainPct}%` : ""}`
+                    : typeof h.costPhp === "number" && h.costPhp > 0
+                      ? `cost ${peso(h.costPhp)}`
+                      : "—"}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <p style={{ color: "var(--text3)", fontSize: "0.68rem", lineHeight: 1.5, marginTop: "0.75rem" }}>
+        Add a <strong style={{ color: "var(--text2)" }}>Status</strong> column to your INVENTORY tab with
+        “Holding”, “Collection”, or “For Sale”. Collection cards are treated as keepsakes — no sell nudge,
+        but flagged if a value spikes. Calls and values are refreshed by the 4 AM routine.
+      </p>
+    </div>
+  );
 }
 
 function GoalCard({ goal }: { goal: InvestmentGoal }) {
@@ -322,7 +428,10 @@ export default function InvestmentIntelligence() {
         </div>
       </div>
 
-      {/* 2 — Watchlist */}
+      {/* 2 — Your holdings (hold/sell calls) */}
+      {data.holdings && data.holdings.length > 0 ? <HoldingsCard holdings={data.holdings} /> : null}
+
+      {/* 3 — Watchlist */}
       <div className="card" style={{ marginBottom: "1rem" }}>
         <SubHeader tag="WATCHLIST" title="Cards to find in PH" />
         <div
@@ -338,7 +447,7 @@ export default function InvestmentIntelligence() {
         </div>
       </div>
 
-      {/* 3 — Sealed hold rules */}
+      {/* 4 — Sealed hold rules */}
       <div className="card" style={{ marginBottom: "1rem" }}>
         <SubHeader tag="SEALED PRODUCTS" title="Hold &amp; sell rules" />
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -377,7 +486,7 @@ export default function InvestmentIntelligence() {
         </div>
       </div>
 
-      {/* 4 — Buy checklist */}
+      {/* 5 — Buy checklist */}
       <div className="card" style={{ marginBottom: "1rem" }}>
         <SubHeader tag="CHECKLIST" title="Run this before every purchase" />
         <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -394,7 +503,7 @@ export default function InvestmentIntelligence() {
         </ol>
       </div>
 
-      {/* 5 — Avoid + Notes */}
+      {/* 6 — Avoid + Notes */}
       <div className="dashboard-split">
         <div className="card">
           <SubHeader tag="AVOID" title="Avoid these" />
