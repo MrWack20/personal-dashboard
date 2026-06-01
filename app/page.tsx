@@ -1,6 +1,7 @@
 import TopBar from "@/components/layout/TopBar";
 import ModuleView from "@/components/module/ModuleView";
 import InvestmentIntelligence from "@/components/module/InvestmentIntelligence";
+import PriorityLists from "@/components/module/PriorityLists";
 import { enabledModules, getModule } from "@/lib/modules";
 import { getModuleData, type ModuleData } from "@/lib/moduleData";
 
@@ -62,7 +63,12 @@ export default async function Home({
         ) : data ? (
           <>
             <ModuleView data={data} />
-            {active?.id === "pokemon-investing" ? <InvestmentIntelligence /> : null}
+            {active?.id === "pokemon-investing" ? (
+              <>
+                <InvestmentIntelligence />
+                <PriorityLists />
+              </>
+            ) : null}
           </>
         ) : (
           <div className="card" style={{ color: "var(--text3)" }}>No modules configured.</div>
