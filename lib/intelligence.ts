@@ -17,17 +17,59 @@ export interface WatchlistItem {
   priceUpdated?: string;
   /** Where the price was verified, e.g. "TCGplayer market". */
   priceSource?: string;
+  /** Whether this card has already been acquired. */
+  acquired?: boolean;
+  /** All-in PHP cost if acquired. */
+  acquiredPrice?: number;
+}
+
+/** Long-term strategy shown in the collapsible Philosophy panel. */
+export interface Philosophy {
+  primaryObjective: string;
+  purchaseRule: string;
+  portfolioFocus: string[];
+  avoid: string[];
+}
+
+export type GoalStatus = "completed" | "in-progress" | "pending" | "opportunistic";
+
+export type GoalTier =
+  | "core-holding"
+  | "priority-1"
+  | "priority-2"
+  | "priority-3"
+  | "opportunistic"
+  | "long-term"
+  | "additional"
+  | "maintenance";
+
+/** Tiered price guide for a target buy (e.g. Pikachu V TG16). */
+export interface GoalBuyTiers {
+  excellent: number;
+  strongBuy: number;
+  fair: number;
+  pass: number;
 }
 
 export interface InvestmentGoal {
+  id: string;
   title: string;
-  priority: "high" | "medium" | "low";
-  status: "on-track" | "in-progress" | "not-started" | "done";
-  targetPhp: number;
-  savedPhp: number;
-  targetDate: string;
-  linkedCard?: string;
-  why: string;
+  status: GoalStatus;
+  completedDate?: string | null;
+  category: string;
+  tier: GoalTier;
+  detail: string;
+  /** Completed goals: all-in entry price and market context. */
+  entryPrice?: number | null;
+  marketAtEntry?: number;
+  discountPct?: number;
+  /** Active targets: tiered price guide, or a single retail max. */
+  targetBuyTiers?: GoalBuyTiers;
+  targetBuyMax?: number;
+  /** Opportunistic / save-toward targets: current market reference. */
+  usdMarket?: number;
+  phpEstimate?: number;
+  rule?: string;
 }
 
 export type HoldingAction =
@@ -64,6 +106,7 @@ export interface SealedRule {
 
 export interface InvestmentIntelligence {
   lastUpdated: string;
+  philosophy: Philosophy;
   usdToPhp: number;
   goals: InvestmentGoal[];
   holdings: HoldingCall[];

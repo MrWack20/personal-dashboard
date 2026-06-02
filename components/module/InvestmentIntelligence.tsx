@@ -11,6 +11,9 @@ import {
   normalizeStatus,
   type WatchlistItem,
   type InvestmentGoal,
+  type GoalTier,
+  type GoalBuyTiers,
+  type Philosophy,
   type HoldingCall,
   type HoldingAction,
 } from "@/lib/intelligence";
@@ -34,7 +37,15 @@ const ACCENT_DIM: Record<Accent, string> = {
   purple: "var(--purple-dim)",
 };
 
-function Badge({ accent, children }: { accent: Accent; children: React.ReactNode }) {
+function Badge({
+  accent,
+  filled = false,
+  children,
+}: {
+  accent: Accent;
+  filled?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <span
       className="mono"
@@ -44,9 +55,10 @@ function Badge({ accent, children }: { accent: Accent; children: React.ReactNode
         textTransform: "uppercase",
         padding: "2px 7px",
         borderRadius: "4px",
-        color: ACCENT_VAR[accent],
-        background: ACCENT_DIM[accent],
+        color: filled ? "var(--bg)" : ACCENT_VAR[accent],
+        background: filled ? ACCENT_VAR[accent] : ACCENT_DIM[accent],
         border: `1px solid ${ACCENT_VAR[accent]}`,
+        fontWeight: filled ? 700 : 400,
         whiteSpace: "nowrap",
       }}
     >
@@ -93,11 +105,25 @@ const PRIORITY: Record<WatchlistItem["priority"], Accent> = {
   low: "blue",
 };
 
-const GOAL_STATUS: Record<InvestmentGoal["status"], { accent: Accent; label: string }> = {
-  "on-track": { accent: "green", label: "On Track" },
-  "in-progress": { accent: "blue", label: "In Progress" },
-  "not-started": { accent: "amber", label: "Not Started" },
-  done: { accent: "green", label: "Done" },
+const GOAL_STATUS_META: Record<
+  InvestmentGoal["status"],
+  { accent: Accent; label: string; filled?: boolean }
+> = {
+  completed: { accent: "green", label: "Done", filled: true },
+  "in-progress": { accent: "amber", label: "In Progress" },
+  pending: { accent: "blue", label: "Pending" },
+  opportunistic: { accent: "purple", label: "Opportunistic" },
+};
+
+const GOAL_TIER_META: Record<GoalTier, { accent?: Accent; label: string }> = {
+  "core-holding": { accent: "green", label: "Core Holding" },
+  "priority-1": { accent: "red", label: "Priority 1" },
+  "priority-2": { accent: "blue", label: "Priority 2" },
+  "priority-3": { accent: "blue", label: "Priority 3" },
+  opportunistic: { accent: "purple", label: "Opportunistic" },
+  "long-term": { accent: "purple", label: "Long Term" },
+  additional: { label: "Additional" },
+  maintenance: { accent: "amber", label: "Maintenance" },
 };
 
 function usd(n: number): string {
@@ -208,11 +234,41 @@ function HoldingsCard({ holdings }: { holdings: HoldingCall[] }) {
   );
 }
 
+function BuyTierGuide({ tiers }: { tiers: GoalBuyTiers }) {
+  const rows: { label: string; value: string; color: string }[] = [
+    { label: "Excellent", value: `under ${peso(tiers.excellent)}`, color: ACCENT_VAR.green },
+    { label: "Strong Buy", value: `under ${peso(tiers.strongBuy)}`, color: ACCENT_VAR.blue },
+    { label: "Fair", value: `under ${peso(tiers.fair)}`, color: ACCENT_VAR.amber },
+    { label: "Pass", value: `above ${peso(tiers.pass)}`, color: ACCENT_VAR.red },
+  ];
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+      <div className="tag">Price guide</div>
+      {rows.map((r) => (
+        <div key={r.label} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.74rem" }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.color, flex: "0 0 auto" }} />
+          <span style={{ color: "var(--text2)" }}>{r.label}</span>
+          <span className="mono" style={{ marginLeft: "auto", color: r.color }}>
+            {r.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function GoalCard({ goal }: { goal: InvestmentGoal }) {
-  const status = GOAL_STATUS[goal.status];
-  const accent = PRIORITY[goal.priority];
-  const isSavings = goal.targetPhp > 0;
-  const pct = isSavings ? Math.min(100, Math.round((goal.savedPhp / goal.targetPhp) * 100)) : 0;
+  const status = GOAL_STATUS_META[goal.status];
+  const tier = GOAL_TIER_META[goal.tier];
+  const accent: Accent = tier.accent ?? status.accent;
+
+  const completed = goal.status === "completed" && typeof goal.entryPrice === "number";
+  const disc = goal.discountPct;
+  const discText =
+    typeof disc === "number" ? (disc > 0 ? ` — ${disc}% below market` : " — at market") : "";
+
+  const showMarket =
+    !goal.targetBuyTiers && goal.targetBuyMax == null && typeof goal.phpEstimate === "number";
 
   return (
     <div
@@ -224,60 +280,51 @@ function GoalCard({ goal }: { goal: InvestmentGoal }) {
         padding: "0.9rem 1rem",
         display: "flex",
         flexDirection: "column",
-        gap: "0.6rem",
+        gap: "0.55rem",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.6rem" }}>
         <div style={{ fontFamily: "var(--font-syne), sans-serif", fontWeight: 700, fontSize: "0.95rem", lineHeight: 1.3 }}>
           {goal.title}
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", alignItems: "flex-end" }}>
-          <Badge accent={accent}>{goal.priority} priority</Badge>
-          <Badge accent={status.accent}>{status.label}</Badge>
-        </div>
+        <Badge accent={status.accent} filled={status.filled}>
+          {status.label}
+        </Badge>
       </div>
 
-      {goal.linkedCard ? (
-        <div className="mono" style={{ fontSize: "0.72rem", color: "var(--text2)" }}>
-          → {goal.linkedCard}
+      <div>
+        {tier.accent ? <Badge accent={tier.accent}>{tier.label}</Badge> : <Pill>{tier.label}</Pill>}
+      </div>
+
+      <p style={{ color: "var(--text2)", fontSize: "0.76rem", lineHeight: 1.5 }}>{goal.detail}</p>
+
+      {completed ? (
+        <div className="mono" style={{ fontSize: "0.76rem", color: "var(--green)" }}>
+          Bought at: {peso(goal.entryPrice as number)}
+          {discText}
         </div>
       ) : null}
 
-      {isSavings ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.74rem" }}>
-            <span className="mono" style={{ color: ACCENT_VAR[accent] }}>
-              {peso(goal.savedPhp)} / {peso(goal.targetPhp)}
-            </span>
-            <span className="mono" style={{ color: "var(--text3)" }}>
-              {pct}% · target {goal.targetDate}
-            </span>
-          </div>
-          <div
-            style={{
-              height: "6px",
-              borderRadius: "999px",
-              background: "var(--surface)",
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                width: `${pct}%`,
-                height: "100%",
-                borderRadius: "999px",
-                background: ACCENT_VAR[accent],
-              }}
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="mono" style={{ fontSize: "0.74rem", color: "var(--text3)" }}>
-          Discipline goal · target {goal.targetDate}
-        </div>
-      )}
+      {goal.targetBuyTiers ? <BuyTierGuide tiers={goal.targetBuyTiers} /> : null}
 
-      <p style={{ color: "var(--text2)", fontSize: "0.76rem", lineHeight: 1.5 }}>{goal.why}</p>
+      {!goal.targetBuyTiers && typeof goal.targetBuyMax === "number" ? (
+        <div className="mono" style={{ fontSize: "0.76rem", color: "var(--green)" }}>
+          Buy at retail · max {peso(goal.targetBuyMax)}
+        </div>
+      ) : null}
+
+      {showMarket ? (
+        <div className="mono" style={{ fontSize: "0.74rem", color: "var(--text2)" }}>
+          Market ≈ {peso(goal.phpEstimate as number)}
+          {typeof goal.usdMarket === "number" ? ` ($${goal.usdMarket})` : ""}
+        </div>
+      ) : null}
+
+      {goal.rule ? (
+        <div style={{ fontSize: "0.72rem", color: "var(--text3)", lineHeight: 1.5, fontStyle: "italic" }}>
+          {goal.rule}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -360,6 +407,11 @@ function WatchCard({ item }: { item: WatchlistItem }) {
           <div style={{ color: "var(--text2)", fontSize: "0.74rem", marginTop: "0.1rem" }}>{item.set}</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", alignItems: "flex-end" }}>
+          {item.acquired ? (
+            <Badge accent="green" filled>
+              ✓ Acquired
+            </Badge>
+          ) : null}
           <Badge accent={budget.accent}>{budget.label}</Badge>
           <Badge accent={PRIORITY[item.priority]}>{item.priority}</Badge>
         </div>
@@ -385,16 +437,130 @@ function WatchCard({ item }: { item: WatchlistItem }) {
   );
 }
 
+function PhilosophyPanel({ philosophy }: { philosophy: Philosophy }) {
+  const [open, setOpen] = useState(false);
+  const firstLine = philosophy.primaryObjective.split(/(?<=\.)\s/)[0];
+
+  const dotList = (items: string[], color: string) => (
+    <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+      {items.map((t, i) => (
+        <li key={i} style={{ display: "flex", gap: "0.5rem", fontSize: "0.76rem", lineHeight: 1.5 }}>
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: color, flex: "0 0 auto", marginTop: 6 }} />
+          <span style={{ color: "var(--text2)" }}>{t}</span>
+        </li>
+      ))}
+    </ul>
+  );
+
+  return (
+    <div
+      style={{
+        background: open ? "var(--surface)" : "var(--surface2)",
+        border: "1px solid var(--border)",
+        borderRadius: "14px",
+        padding: "0.85rem 1rem",
+        marginBottom: "1rem",
+      }}
+    >
+      <div
+        onClick={() => setOpen((o) => !o)}
+        role="button"
+        style={{ cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem" }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <div className="tag">INVESTMENT PHILOSOPHY</div>
+          {!open ? (
+            <div
+              style={{
+                color: "var(--text2)",
+                fontSize: "0.8rem",
+                marginTop: "0.2rem",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {firstLine}
+            </div>
+          ) : null}
+        </div>
+        <span
+          className="mono"
+          style={{
+            fontSize: "0.72rem",
+            color: "var(--text2)",
+            border: "1px solid var(--border2)",
+            borderRadius: "6px",
+            padding: "0.25rem 0.6rem",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {open ? "Collapse −" : "Expand +"}
+        </span>
+      </div>
+
+      {open ? (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "1rem",
+            marginTop: "0.9rem",
+          }}
+        >
+          <div>
+            <div className="tag" style={{ marginBottom: "0.4rem" }}>
+              Objective
+            </div>
+            <p style={{ color: "var(--text2)", fontSize: "0.78rem", lineHeight: 1.55 }}>
+              {philosophy.primaryObjective}
+            </p>
+          </div>
+          <div>
+            <div className="tag" style={{ marginBottom: "0.4rem" }}>
+              Purchase Rule
+            </div>
+            <p style={{ color: "var(--text2)", fontSize: "0.78rem", lineHeight: 1.55, marginBottom: "0.55rem" }}>
+              {philosophy.purchaseRule}
+            </p>
+            {dotList(philosophy.portfolioFocus, ACCENT_VAR.green)}
+          </div>
+          <div>
+            <div className="tag" style={{ marginBottom: "0.4rem" }}>
+              Avoid
+            </div>
+            {dotList(philosophy.avoid, ACCENT_VAR.red)}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 type IntelTab = "goals" | "holdings" | "watchlist" | "buylists" | "playbook";
 
 export default function InvestmentIntelligence() {
   const data = intelligence;
   const [tab, setTab] = useState<IntelTab>("goals");
 
-  const goals = [...data.goals].sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
+  const goals = data.goals;
   const watchlist = [...data.watchlist].sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
   const holdings = data.holdings ?? [];
   const hasHoldings = holdings.length > 0;
+
+  const completedCount = goals.filter((g) => g.status === "completed").length;
+  const groupOf = (g: InvestmentGoal): "core" | "active" | "opportunistic" | "long" => {
+    if (g.status === "completed") return "core";
+    if (g.status === "opportunistic") return "opportunistic";
+    if (g.tier === "long-term") return "long";
+    return "active";
+  };
+  const goalSections = [
+    { key: "core", tag: "CORE HOLDINGS", title: "Acquired cornerstones", items: goals.filter((g) => groupOf(g) === "core") },
+    { key: "active", tag: "ACTIVE PRIORITIES", title: "Next buys, in order", items: goals.filter((g) => groupOf(g) === "active") },
+    { key: "opportunistic", tag: "OPPORTUNISTIC", title: "Only if well below market", items: goals.filter((g) => groupOf(g) === "opportunistic") },
+    { key: "long", tag: "LONG TERM", title: "Save toward these", items: goals.filter((g) => groupOf(g) === "long") },
+  ].filter((s) => s.items.length > 0);
 
   const tabs: { id: IntelTab; label: string; badge?: number }[] = [
     { id: "goals", label: "Goals", badge: goals.length },
@@ -432,6 +598,9 @@ export default function InvestmentIntelligence() {
         </div>
       </div>
 
+      {/* Investment philosophy — collapsible, always at the top */}
+      {data.philosophy ? <PhilosophyPanel philosophy={data.philosophy} /> : null}
+
       {/* Section nav — one panel at a time to keep scrolling short */}
       <div style={{ display: "flex", gap: "0.4rem", marginBottom: "1rem", flexWrap: "wrap" }}>
         {tabs.map((t) => {
@@ -465,21 +634,43 @@ export default function InvestmentIntelligence() {
         })}
       </div>
 
-      {/* Goals */}
+      {/* Goals — grouped, with a completion counter */}
       {tab === "goals" ? (
-        <div className="card">
-          <SubHeader tag="GOALS" title="Stay on track — priority order" />
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-              gap: "0.85rem",
-            }}
+            className="card"
+            style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}
           >
-            {goals.map((goal) => (
-              <GoalCard key={goal.title} goal={goal} />
-            ))}
+            <div>
+              <div className="tag">GOALS</div>
+              <h3 style={{ fontSize: "1.05rem", color: "var(--text)", marginTop: "0.15rem" }}>Acquisition roadmap</h3>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <span className="mono" style={{ fontSize: "1rem", color: "var(--green)", fontWeight: 700 }}>
+                {completedCount} of {goals.length}
+              </span>
+              <span className="mono" style={{ fontSize: "0.7rem", color: "var(--text3)", display: "block" }}>
+                goals completed
+              </span>
+            </div>
           </div>
+
+          {goalSections.map((section) => (
+            <div key={section.key} className="card">
+              <SubHeader tag={section.tag} title={section.title} />
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+                  gap: "0.85rem",
+                }}
+              >
+                {section.items.map((goal) => (
+                  <GoalCard key={goal.id} goal={goal} />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       ) : null}
 

@@ -1,56 +1,186 @@
 {
-  "lastUpdated": "2026-05-30",
+  "lastUpdated": "2026-06-02",
+  "philosophy": {
+    "primaryObjective": "Buy premium collector cards below market value. Prioritize liquidity, collector demand, and long-term scarcity. Focus on cornerstone cards rather than quantity.",
+    "purchaseRule": "Prefer acquisitions at 8-15% below market. No FOMO purchases. Patience is part of the strategy.",
+    "portfolioFocus": [
+      "Premium Eeveelution cards — Umbreon, Sylveon, Glaceon, Leafeon",
+      "Premium Pikachu cards — TG and GG variants",
+      "Premium Charizard exposure — TG and sealed",
+      "Select sealed products at retail price only"
+    ],
+    "avoid": [
+      "Random illustration rares of non-popular Pokemon",
+      "Most modern ex cards without proven collector demand",
+      "Trainer-only cards unless heavily discounted",
+      "Cards that have recently experienced rapid speculative price spikes",
+      "Any card above the 8-15% below market entry rule",
+      "FOMO purchases at launch week prices"
+    ]
+  },
   "usdToPhp": 61.47,
   "goals": [
     {
-      "title": "Lock in first GG-set hold within ₱5K budget",
-      "priority": "high",
+      "id": "goal-001",
+      "title": "Acquire Umbreon V TG22/TG30 — Brilliant Stars",
+      "status": "completed",
+      "completedDate": "2026-06-02",
+      "category": "singles",
+      "tier": "core-holding",
+      "detail": "Purchased at 4229 pesos all-in including shipping. Approximately 9 percent below local market. Strong entry. Up +35 percent in 30 days globally. Hold — no reason to sell.",
+      "entryPrice": 4229,
+      "marketAtEntry": 4640,
+      "discountPct": 9
+    },
+    {
+      "id": "goal-002",
+      "title": "Acquire Charizard TG03/TG30 — Lost Origin",
+      "status": "completed",
+      "completedDate": "2026-05-29",
+      "category": "singles",
+      "tier": "core-holding",
+      "detail": "First major singles investment. Cost basis 1870 pesos. Up approximately 11-18 percent unrealized. Hold — Charizard demand is permanent.",
+      "entryPrice": 1870,
+      "marketAtEntry": 1870,
+      "discountPct": 0
+    },
+    {
+      "id": "goal-003",
+      "title": "Build Chaos Rising sealed position",
+      "status": "completed",
+      "completedDate": "2026-05-22",
+      "category": "sealed",
+      "tier": "core-holding",
+      "detail": "Holding 1 booster bundle at 1999 pesos, 2 blisters at 1276 each, 1 Perfect Order blister at 1276. Total sealed: 5827 pesos. Hold minimum 6 months — do not crack.",
+      "entryPrice": 5827,
+      "marketAtEntry": 5827,
+      "discountPct": 0
+    },
+    {
+      "id": "goal-004",
+      "title": "Acquire Lucario VSTAR SWSH291 — Black Star Promo",
+      "status": "completed",
+      "completedDate": "2026-06-01",
+      "category": "singles",
+      "tier": "additional",
+      "detail": "Purchased at 811 pesos total including shipping. Below local Collectr market of 865 pesos. Long-term hold — Lucario demand supported by Mega Evolution block hype in 2026.",
+      "entryPrice": 811,
+      "marketAtEntry": 865,
+      "discountPct": 6
+    },
+    {
+      "id": "goal-005",
+      "title": "Acquire Pikachu V TG16/TG30 — Lost Origin",
+      "status": "pending",
+      "completedDate": null,
+      "category": "singles",
+      "tier": "priority-1",
+      "detail": "Premium Pikachu position. Out-of-print Trainer Gallery. Most universal buyer pool in PH. Complements existing Umbreon V TG22 position.",
+      "entryPrice": null,
+      "targetBuyTiers": {
+        "excellent": 6700,
+        "strongBuy": 6900,
+        "fair": 7200,
+        "pass": 7500
+      },
+      "rule": "Buy only at 8-15 percent below market. Do not pay above 7200 pesos."
+    },
+    {
+      "id": "goal-006",
+      "title": "Acquire Glaceon VSTAR GG40/GG70 — Crown Zenith GG",
+      "status": "pending",
+      "completedDate": null,
+      "category": "singles",
+      "tier": "priority-2",
+      "detail": "Premium Eeveelution. Crown Zenith GG is fully out of print. Up +13 percent in 30 days. Strong long-term hold candidate alongside Umbreon V.",
+      "entryPrice": null,
+      "usdMarket": 53.10,
+      "phpEstimate": 3264,
+      "rule": "Must be at least 10 percent below market. Prefer discount over urgency."
+    },
+    {
+      "id": "goal-007",
+      "title": "Acquire Leafeon VSTAR GG35/GG70 — Crown Zenith GG",
+      "status": "pending",
+      "completedDate": null,
+      "category": "singles",
+      "tier": "priority-3",
+      "detail": "Premium Eeveelution. Currently down -14.8 percent in 30 days — dip buy opportunity. Crown Zenith GG out of print. Same investment thesis as Glaceon.",
+      "entryPrice": null,
+      "usdMarket": 65.61,
+      "phpEstimate": 4033,
+      "rule": "Must be at least 10 percent below market. Currently in a dip — favorable entry window."
+    },
+    {
+      "id": "goal-008",
+      "title": "Pre-order Pitch Black ETB at retail",
       "status": "in-progress",
-      "targetPhp": 4100,
-      "savedPhp": 2000,
-      "targetDate": "Q3 2026",
-      "linkedCard": "Regigigas VSTAR (GG55) + Cynthia's Ambition (GG59)",
-      "why": "GG set is fully out of print. The Regigigas + Cynthia pair is the best out-of-print GG exposure achievable inside the ₱5K budget — buy both for a ~₱4,100 combined long-term hold."
+      "completedDate": null,
+      "category": "sealed",
+      "tier": "priority-2",
+      "detail": "Release July 17 2026. Mega Darkrai ex is the chase card. JP Abyss Eye sealed already trading 30 percent above Chaos Rising equivalents. Buy at retail 2500-3000 pesos only — never above MSRP.",
+      "entryPrice": null,
+      "targetBuyMax": 3000,
+      "rule": "Retail price only. No FOMO launch week buys on singles."
     },
     {
-      "title": "Secure best TG buy — Umbreon V (TG06)",
-      "priority": "high",
+      "id": "goal-009",
+      "title": "Pre-order 30th Celebration ETB at retail",
+      "status": "pending",
+      "completedDate": null,
+      "category": "sealed",
+      "tier": "priority-1",
+      "detail": "Release September 16 2026. Most important release of 2026. First-ever simultaneous worldwide release. All-foil packs, new rarity, Pikachu and Mewtwo and Mew. Pre-order the moment slots open — likely July or August 2026.",
+      "entryPrice": null,
+      "targetBuyMax": 3500,
+      "rule": "MSRP only. Pre-order before launch — do not buy at secondary market prices."
+    },
+    {
+      "id": "goal-010",
+      "title": "Offload weak singles — recover dead capital",
       "status": "in-progress",
-      "targetPhp": 3690,
-      "savedPhp": 1500,
-      "targetDate": "Q3 2026",
-      "linkedCard": "Umbreon V (TG06)",
-      "why": "Umbreon has one of the deepest fan bases in Pokémon and TG06 is the accessible entry vs the ₱30K+ Evolving Skies VMAX alt. Liquidly sellable in PH."
+      "completedDate": null,
+      "category": "portfolio-cleanup",
+      "tier": "maintenance",
+      "detail": "List on Facebook B/S groups: Patrat, Pignite, Tympole, Sewaddle, Swadloon, McD promos, Naganadel GX, Solgaleo GX, Electrike, Bibarel, Yanma, Clamperl, Shedinja. Target: recover 2000-3000 pesos to redeploy.",
+      "entryPrice": null,
+      "rule": "Accept break-even or slight loss. Capital recovery is the goal."
     },
     {
-      "title": "Save toward Origin Forme Palkia VSTAR (GG67)",
-      "priority": "medium",
-      "status": "not-started",
-      "targetPhp": 7070,
-      "savedPhp": 0,
-      "targetDate": "Q4 2026",
-      "linkedCard": "Origin Forme Palkia VSTAR (GG67)",
-      "why": "Lowest-entry card in the 'actually moving' tier of GG (+12.8% in 30 days). The first stretch goal above ₱5K — build a dedicated ₱8–10K pot, then buy."
+      "id": "goal-011",
+      "title": "Umbreon and Darkrai GX Tag Team — Unified Minds",
+      "status": "opportunistic",
+      "completedDate": null,
+      "category": "singles",
+      "tier": "opportunistic",
+      "detail": "Not actively hunting. Buy only if significantly below market. PSA 10 sold $599 in December 2025. Best grading upside in the 5K-7K range. Inspect all corners before buying.",
+      "usdMarket": 87,
+      "phpEstimate": 5348,
+      "rule": "Minimum 15 percent below market. Only if condition is NM."
     },
     {
-      "title": "Hold sealed Chaos Rising to minimum hold dates",
-      "priority": "high",
-      "status": "on-track",
-      "targetPhp": 0,
-      "savedPhp": 0,
-      "targetDate": "Nov 2026",
-      "linkedCard": "Chaos Rising Booster Bundle + Blisters",
-      "why": "Discipline goal, not a savings goal. Do NOT crack or sell early. Bundle: hold 6+ mo, sell half at +50%. Blisters: hold 3+ mo. Mega Greninja SIR if pulled — hold 2–3 mo minimum."
+      "id": "goal-012",
+      "title": "Reshiram and Charizard GX Tag Team",
+      "status": "opportunistic",
+      "completedDate": null,
+      "category": "singles",
+      "tier": "opportunistic",
+      "detail": "Not actively hunting. Strong Charizard plus Reshiram pairing. Tag Team era fully out of print. Buy only if significantly discounted from market.",
+      "usdMarket": 45,
+      "phpEstimate": 2766,
+      "rule": "Minimum 15 percent below market only."
     },
     {
-      "title": "Add a stable Eeveelution SIR (Sylveon/Espeon)",
-      "priority": "low",
-      "status": "not-started",
-      "targetPhp": 2460,
-      "savedPhp": 0,
-      "targetDate": "Q1 2027",
-      "linkedCard": "Sylveon ex / Espeon ex SIR",
-      "why": "Eeveelution demand is permanent and Prismatic Evolutions is stable post-release. Low-risk slow grower to round out the portfolio once higher-priority buys are done."
+      "id": "goal-013",
+      "title": "Save toward Palkia VSTAR GG67 — Crown Zenith GG",
+      "status": "pending",
+      "completedDate": null,
+      "category": "singles",
+      "tier": "long-term",
+      "detail": "Lowest-entry card in the fast-moving GG tier. Up +12.8 percent in 30 days. Part of the Creation trio. Need 7000-8000 pesos budget. Build toward this using profits from offloaded singles.",
+      "usdMarket": 115,
+      "phpEstimate": 7069,
+      "rule": "Save toward this — do not rush. Buy only when budget allows without compromising Priority 1-3 targets."
     }
   ],
   "holdings": [
@@ -99,6 +229,7 @@
   "watchlist": [
     {
       "name": "Giratina VSTAR",
+      "acquired": false,
       "cardNumber": "GG69",
       "set": "Crown Zenith Galarian Gallery",
       "type": "GG",
@@ -115,6 +246,7 @@
     },
     {
       "name": "Origin Forme Palkia VSTAR",
+      "acquired": false,
       "cardNumber": "GG67",
       "set": "Crown Zenith Galarian Gallery",
       "type": "GG",
@@ -131,6 +263,7 @@
     },
     {
       "name": "Regigigas VSTAR",
+      "acquired": false,
       "cardNumber": "GG55",
       "set": "Crown Zenith Galarian Gallery",
       "type": "GG",
@@ -147,6 +280,7 @@
     },
     {
       "name": "Cynthia's Ambition",
+      "acquired": false,
       "cardNumber": "GG59",
       "set": "Crown Zenith Galarian Gallery",
       "type": "GG",
@@ -163,6 +297,7 @@
     },
     {
       "name": "Umbreon V",
+      "acquired": false,
       "cardNumber": "TG06",
       "set": "Lost Origin Trainer Gallery",
       "type": "TG",
@@ -179,6 +314,7 @@
     },
     {
       "name": "Pikachu VMAX",
+      "acquired": false,
       "cardNumber": "TG16",
       "set": "Lost Origin Trainer Gallery",
       "type": "TG",
@@ -195,6 +331,7 @@
     },
     {
       "name": "Pikachu",
+      "acquired": false,
       "cardNumber": "TG30",
       "set": "Lost Origin Trainer Gallery",
       "type": "TG",
@@ -211,6 +348,7 @@
     },
     {
       "name": "Mega Greninja ex SIR",
+      "acquired": false,
       "cardNumber": "Chase",
       "set": "Chaos Rising (Mega Evolution)",
       "type": "SIR",
@@ -227,6 +365,7 @@
     },
     {
       "name": "Sylveon ex / Espeon ex SIR",
+      "acquired": false,
       "cardNumber": "SIR",
       "set": "Prismatic Evolutions (SV)",
       "type": "SIR",
