@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-06-02T03:00:00+08:00",
+  "summary": "Daily briefing is set up — full metrics and alerts populate at the 4 AM run.",
+  "modules": [
+    {
+      "moduleId": "pokemon-investing",
+      "label": "Pokémon Investing",
+      "icon": "📈",
+      "headline": "4 of 13 goals complete · watchlist of 9 cards.",
+      "metrics": [
+        { "label": "Goals done", "value": "4 / 13", "accent": "green" },
+        { "label": "Watchlist", "value": "9", "accent": "blue" }
+      ],
+      "alerts": [
+        "Capital-recovery sell list is active — offload weak singles.",
+        "Glaceon & Leafeon (GG) flagged as buy-zone watch."
+      ]
+    },
+    {
+      "moduleId": "pica-pica",
+      "label": "J's Pica Pica",
+      "icon": "🛍️",
+      "headline": "Awaiting the first nightly run.",
+      "metrics": [],
+      "alerts": []
+    },
+    {
+      "moduleId": "national-dex",
+      "label": "National Dex",
+      "icon": "📕",
+      "headline": "Awaiting the first nightly run.",
+      "metrics": [],
+      "alerts": []
+    },
+    {
+      "moduleId": "shiny-dex",
+      "label": "Shiny Living Dex",
+      "icon": "✨",
+      "headline": "Awaiting the first nightly run.",
+      "metrics": [],
+      "alerts": []
+    }
+  ]
+}

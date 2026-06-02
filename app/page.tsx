@@ -1,4 +1,5 @@
 import TopBar from "@/components/layout/TopBar";
+import MorningBriefing from "@/components/layout/MorningBriefing";
 import ModuleView from "@/components/module/ModuleView";
 import UserSheetView from "@/components/module/UserSheetView";
 import InvestmentIntelligence from "@/components/module/InvestmentIntelligence";
@@ -51,6 +52,8 @@ export default async function Home({
           <UserSheetView id={sheetId} />
         ) : (
           <>
+            <MorningBriefing />
+
             <div style={{ marginBottom: "1.25rem" }}>
               <div className="tag">{active?.icon} {active?.label}</div>
               <p style={{ color: "var(--text2)", fontSize: "0.85rem", marginTop: "0.25rem" }}>
